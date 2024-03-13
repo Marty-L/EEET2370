@@ -4,8 +4,7 @@
 
 RH_RF95 rf95; // Create radio object
 float frequency = 916.00; // This frequency is for Group 1, you will need to change your frequency according to the provided table
-void setup() 
-{
+void setup() {
   Serial.begin(9600);
   Serial.println("Start LoRa Client");
   if (!rf95.init())
@@ -26,38 +25,30 @@ void setup()
   rf95.setCodingRate4(5);
 }
 
-void loop()
-{
-  Serial.println("Sending message to LoRa Server");
+void loop() {
+  Serial.println("Sending message to LoRa Server");       //Debug output to serial monitor
   // Send a message to LoRa Server
-  uint8_t data[] = "Hello, This is RMIT Lab Group 1"; 
-  rf95.send(data, sizeof(data));
+  uint8_t data[] = "Hello, This is RMIT Lab Group 1";     //Data goes here - String by default
+  rf95.send(data, sizeof(data));                          //Send data via the radio module
   
-  rf95.waitPacketSent();
+  rf95.waitPacketSent();                                  //Wait for the Tx to complete
   // Now wait for a reply
-  uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-  uint8_t len = sizeof(buf);
+  uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];                   //Buffer for storing the response data 
+  uint8_t len = sizeof(buf);                              //Amount of data sent back
 
-  if (rf95.waitAvailableTimeout(3000))
-  { 
+  if (rf95.waitAvailableTimeout(3000)) {                  //Wait 3 sec for data to be available 
     // Should be a reply message for us now   
-    if (rf95.recv(buf, &len))
-   {
-      Serial.print("got a reply: ");
+    if (rf95.recv(buf, &len)) {                           //Read the recv data into buffer
+      
+      Serial.print("got a reply: ");                      //Provide debug output to serial monitor
       Serial.println((char*)buf);
-      Serial.print("RSSI: ");
+      Serial.print("RSSI: ");                             //Include Received Signal Strength
       Serial.println(rf95.lastRssi(), DEC);    
+    } else {
+      Serial.println("recv failed");                      //Something went wrong - no data Rx'd
     }
-    else
-    {
-      Serial.println("recv failed");
-    }
-  }
-  else
-  {
-    Serial.println("No reply, is LoRa server running?");
+  } else {
+    Serial.println("No reply, is LoRa server running?");  //Timed out - let the user know
   }
   delay(5000);
 }
-
-

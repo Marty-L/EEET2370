@@ -7,11 +7,10 @@
 // Singleton instance of the radio driver
 RH_RF95 rf95;
 
-int led = A2;
-float frequency = 916.0;
+int led = A2;                               //LED for visual feedback of data being Rx'd
+float frequency = 916.0;                    //Group 1 RF freq. (916.0 MHz default)
 
-void setup() 
-{
+void setup() {
   pinMode(led, OUTPUT);     
   Bridge.begin(BAUDRATE);
   Console.begin();
@@ -33,38 +32,34 @@ void setup()
   // Setup Coding Rate:5(4/5),6(4/6),7(4/7),8(4/8) 
   rf95.setCodingRate4(5);
   
-  Console.print("Listening on frequency: ");
+  Console.print("Listening on frequency: ");            //Serial console debug - echo freq.
   Console.println(frequency);
 }
 
-void loop()
-{
-  if (rf95.available())
-  {
+void loop() {
+  if (rf95.available()) {                               //Check if RF module in use
     // Should be a message for us now   
-    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
+    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];               //Buffer for reading Rx'd data into
     uint8_t len = sizeof(buf);
-    if (rf95.recv(buf, &len))
-    {
-      digitalWrite(led, HIGH);
-      RH_RF95::printBuffer("request: ", buf, len);
-      Console.print("got request: ");
+    
+    if (rf95.recv(buf, &len)) {                         //Have Rx'd data from RF module
+      digitalWrite(led, HIGH);                          //Visual feedback via LED - data Rx'd
+      RH_RF95::printBuffer("request: ", buf, len);      //Write Rx'd data to buffer
+      Console.print("got request: ");                   //Echo back to user via serial console
       Console.println((char*)buf);
-      Console.print("RSSI: ");
+      Console.print("RSSI: ");                          //Include Received Signal Strength
       Console.println(rf95.lastRssi(), DEC);
       
       // Send a reply
-      uint8_t data[] = "And hello back to you Group 1";
-      rf95.send(data, sizeof(data));
-      rf95.waitPacketSent();
-      Console.println("Sent a reply");
+      uint8_t data[] = "And hello back to you Group 1"; //Reply data goes here - String by default
+      rf95.send(data, sizeof(data));                    //Send response via RF module
+      rf95.waitPacketSent();                            //Wait for Tx flag to clear
+      Console.println("Sent a reply");                  //...let the user know
       digitalWrite(led, LOW);
-    }
-    else
-    {
-      Console.println("recv failed");
+      
+    } else {
+      Console.println("recv failed");                   //Whoops! Something went wrong...
+                                                        //...better tell somebody.
     }
   }
 }
-
-
