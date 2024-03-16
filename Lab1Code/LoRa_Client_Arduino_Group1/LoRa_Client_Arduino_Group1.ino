@@ -1,5 +1,5 @@
 #include <SPI.h>
-#include <RH_RF95.h>
+#include <RH_RF95.h>            //Uses RadioHead
 
 //GLOBAL VARIABLES
 RH_RF95 rf95;                     // Create radio object
