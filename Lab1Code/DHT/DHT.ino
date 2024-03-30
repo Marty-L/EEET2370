@@ -1,6 +1,6 @@
-#include <dht.h>
+#include <dht.h>      //Using library from http://arduino.cc/playground/Main/DHTLib
 
-dht DHT;
+dht DHT;    
 
 //GLOBAL VARIABLES
 #define DHT11_PIN 5
