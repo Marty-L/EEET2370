@@ -51,7 +51,7 @@ void loop() {
       Console.print("Group ");
       Console.write(groupID);
       Console.print(" says:"); 
-      Console.println((char*)buf[1]);                     //Print the Rx'd data
+      Console.println(buf[1]);                            //Print the Rx'd data
       Console.print("RSSI: ");                            //Include Received Signal Strength
       Console.println(rf95.lastRssi(), DEC);
       
